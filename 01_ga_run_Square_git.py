@@ -7,7 +7,8 @@ Created on Mon Nov 11 07:46:18 2019
 
 import pandas as pd
 import numpy as np
-import ga_functions_clean as ga
+import ga_functions_git as ga
+
 
 '''
 Tuning workflow for optimizing elemental fractions that will be used to 
@@ -28,13 +29,13 @@ If a non-square matrix is used the script must be changed as follows:
 ''' ------------------------------------------------------------------ '''
 pop_size = 100 # number of individuals in population
 num_parents = int(pop_size/2)
-generations = 1000
+generations = 100
 mutation_rate = 100 # of rows (chromosomes) that will have one cell (gene) mutated
 
 ''' ------------------------------------------------------------------ '''
 ''' DATA IMPORT '''
 ''' ------------------------------------------------------------------ '''
-litho = pd.read_excel('user elemental and mineral data')
+litho = pd.read_excel('user input')
 litho.reset_index(inplace=True, drop=True)
 depth = litho['Sample'].copy() # USER CAN REMOVE, OR MODIFY FOR DEPTH DATA
 
@@ -82,7 +83,7 @@ best_fit = []
 F_vecs = ga.parents(pop_size, F, F_max, F_min) # kill this when plots are finished
 for i in range(generations):
     ''' FITNESS '''
-    F_wFitness, F_parents = ga.fitness(pop_size, num_parents, 
+    F_wFitness, F_parents, M_pred = ga.fitness(pop_size, num_parents, 
                                          F_vecs, F_max, M_actual, E)
     ''' FITNESS TRACKING (and reporting) '''
     # calc the min fitness...this needs to be preserved each time it beats 
@@ -113,3 +114,7 @@ best_model = pd.DataFrame(best_model)
 best_model['Unity'] = 1
 best_model.columns = F.columns
 best_model.index = F.index
+
+for i in M_actual.columns:
+    corrcoef = np.corrcoef(M_actual[i], M_pred[i])[0,1]
+    print(i + ' r-sqr: ', round(corrcoef**2, 3))

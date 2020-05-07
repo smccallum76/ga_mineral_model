@@ -278,7 +278,7 @@ def fitness(pop_size, num_parents, F_vecs, F_max, M_actual, E,metric='rss'):
     # copy of the upper half of most fit parents that will be used to define 
     # the other half of offspring
     F_parents = F_wFitness.iloc[0:num_parents,0:-2]
-    return F_wFitness, F_parents
+    return F_wFitness, F_parents, M_pred
 
 def crossover(F_parents, num_parents):
     '''
